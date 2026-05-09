@@ -1,39 +1,17 @@
-name: Deploy Multi Nginx
+name: Deploy Test
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
-  deploy:
+  test:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Deploy via SSH
-      uses: appleboy/ssh-action@v1.0.3
-      with:
-        host: ${{ secrets.SERVER_IP }}
-        username: ubuntu
-        key: ${{ secrets.SSH_KEY }}
-        script: |
-          cd ~/multi-nginx
-          git pull origin main
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-          # SITE 1
-          sudo mkdir -p /var/www/site1
-          sudo cp -r sites/site1/* /var/www/site1/
-
-          # SITE 2
-          sudo mkdir -p /var/www/site2
-          sudo cp -r sites/site2/* /var/www/site2/
-
-          # NGINX CONFIG
-          sudo cp nginx-config/site1.conf /etc/nginx/sites-available/
-          sudo ln -sf /etc/nginx/sites-available/site1.conf /etc/nginx/sites-enabled/
-
-          sudo cp nginx-config/site2.conf /etc/nginx/sites-available/
-          sudo ln -sf /etc/nginx/sites-available/site2.conf /etc/nginx/sites-enabled/
-
-          # TEST + RELOAD
-          sudo nginx -t
-          sudo systemctl reload nginx
+      - name: CI/CD Test
+        run: echo "Workflow works!"
